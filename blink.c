@@ -19,6 +19,8 @@ void sleep(void)
 {
     sleep_mode();
     if (state == 0) {
+        int old = PORTB;
+
         WDTCR &= ~(1<<WDTIE);
         PORTB &= ~(1<<PB1 | 1<<PB3 | 1<<PB4);
 
@@ -26,6 +28,8 @@ void sleep(void)
         PCMSK |= (1<<2);
 
         sleep_mode();
+
+        PORTB = old;
 
         state = 1;
         _delay_ms(500);
