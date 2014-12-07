@@ -14,6 +14,7 @@
 #define BUTT (1<<PB2)
 
 #define COUNTER_START (5*DURATION_MIN)
+#define DEBOUNCE_TIME 100
 
 char state = 1;
 char counter = COUNTER_START;
@@ -24,9 +25,13 @@ ISR(WDT_vect)
 
 ISR(PCINT0_vect)
 {
+    uint8_t read = PINB;
     PCMSK &= ~(1<<2);
-    state = 0;
-    debounce();
+    if ((read & BUTT) == 0) {
+        state = 0;
+    }
+    _delay_ms(DEBOUNCE_TIME);
+    PCMSK |= (1<<2);
 }
 
 void power_down(void)
@@ -36,19 +41,17 @@ void power_down(void)
         WDTCR &= ~(1<<WDTIE);
         PORTB &= ~(LED0 | LED1 | LED2);
 
-        sleep_mode();
+        state = 2;
+
+        do {
+            sleep_mode();
+        } while(state == 2);
 
         state = 1;
         counter = COUNTER_START;
         WDTCR |= (1<<WDTIE);
 
         PORTB = old;
-}
-
-void debounce(void)
-{
-    _delay_ms(300);
-    PCMSK |= (1<<2);
 }
 
 void sleep(void)
