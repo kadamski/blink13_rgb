@@ -12,7 +12,8 @@
 
 char state = 1;
 
-ISR(WDT_vect) {
+ISR(WDT_vect)
+{
 }
 
 ISR(PCINT0_vect)
@@ -43,11 +44,6 @@ void sleep(void)
 
         WDTCR |= (1<<WDTIE);
     }
-    // if (PINB & (1<<PB2) == 0) {
-    //     WDTCR &= ~(1<<WDTIE);
-    //     PORTB = 0;
-    //     for (;;) {}
-    // }
 }
 
 inline void setup_ports(void)
@@ -61,7 +57,8 @@ inline void setup_ports(void)
     PCMSK = (1<<2);
 }
 
-int main(void) {
+int main(void)
+{
     MCUSR = 0;
 
     setup_ports();
