@@ -31,6 +31,8 @@ ISR(PCINT0_vect)
 
 void power_down(void)
 {
+        int old = PORTB;
+
         WDTCR &= ~(1<<WDTIE);
         PORTB &= ~(LED0 | LED1 | LED2);
 
@@ -39,6 +41,8 @@ void power_down(void)
         state = 1;
         counter = COUNTER_START;
         WDTCR |= (1<<WDTIE);
+
+        PORTB = old;
 }
 
 void debounce(void)
@@ -52,11 +56,7 @@ void sleep(void)
     wdt_reset();
     sleep_mode();
     if (state == 0) {
-        int old = PORTB;
-
         power_down();
-
-        PORTB = old;
     }
 }
 
