@@ -40,6 +40,12 @@ void power_down(void)
         WDTCR |= (1<<WDTIE);
 }
 
+void debounce(void)
+{
+    _delay_ms(300);
+    PCMSK |= (1<<2);
+}
+
 void sleep(void)
 {
     wdt_reset();
@@ -47,15 +53,13 @@ void sleep(void)
     if (state == 0) {
         int old = PORTB;
 
-        _delay_ms(500);
-        PCMSK |= (1<<2);
+        debounce();
 
         power_down();
 
         PORTB = old;
 
-        _delay_ms(500);
-        PCMSK |= (1<<2);
+        debounce();
     }
 }
 
