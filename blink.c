@@ -17,7 +17,7 @@
 #define DEBOUNCE_TIME 100
 
 char state = 1;
-char counter = COUNTER_START;
+char counter = 0;
 
 ISR(WDT_vect)
 {
