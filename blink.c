@@ -4,13 +4,18 @@
 #include <avr/sleep.h>
 #include <avr/interrupt.h>
 
+#define DURATION_MIN 15
+
 #define LED0 (1<<PB0)
 #define LED1 (1<<PB3)
 #define LED2 (1<<PB4)
 
 #define BUTT (1<<PB2)
 
+#define COUNTER_START (5*DURATION_MIN)
+
 char state = 1;
+char counter = COUNTER_START;
 
 ISR(WDT_vect)
 {
@@ -22,27 +27,33 @@ ISR(PCINT0_vect)
     state = 0;
 }
 
+void power_down(void)
+{
+        WDTCR &= ~(1<<WDTIE);
+        PORTB &= ~(LED0 | LED1 | LED2);
+
+        sleep_mode();
+
+        state = 1;
+        counter = COUNTER_START;
+        WDTCR |= (1<<WDTIE);
+}
+
 void sleep(void)
 {
     sleep_mode();
     if (state == 0) {
         int old = PORTB;
 
-        WDTCR &= ~(1<<WDTIE);
-        PORTB &= ~(LED0 | LED1 | LED2);
-
         _delay_ms(500);
         PCMSK |= (1<<2);
 
-        sleep_mode();
+        power_down();
 
         PORTB = old;
 
-        state = 1;
         _delay_ms(500);
         PCMSK |= (1<<2);
-
-        WDTCR |= (1<<WDTIE);
     }
 }
 
@@ -73,6 +84,10 @@ int main(void)
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
     for(;;) {
+        if (counter-- == 0) {
+            power_down();
+        }
+
         sleep();
         PORTB ^= LED0 | LED1;
         sleep();
