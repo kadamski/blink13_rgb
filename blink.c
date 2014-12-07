@@ -26,6 +26,7 @@ ISR(PCINT0_vect)
 {
     PCMSK &= ~(1<<2);
     state = 0;
+    debounce();
 }
 
 void power_down(void)
@@ -53,13 +54,9 @@ void sleep(void)
     if (state == 0) {
         int old = PORTB;
 
-        debounce();
-
         power_down();
 
         PORTB = old;
-
-        debounce();
     }
 }
 
