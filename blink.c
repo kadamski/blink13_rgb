@@ -22,7 +22,7 @@ void sleep(void)
         int old = PORTB;
 
         WDTCR &= ~(1<<WDTIE);
-        PORTB &= ~(1<<PB1 | 1<<PB3 | 1<<PB4);
+        PORTB &= ~(1<<PB0 | 1<<PB3 | 1<<PB4);
 
         _delay_ms(500);
         PCMSK |= (1<<2);
@@ -46,11 +46,11 @@ void sleep(void)
 
 int main(void) {
     MCUSR = 0;
-    DDRB |= 1<<PB1 | 1<<PB3 | 1<<PB4;
+    DDRB |= 1<<PB0 | 1<<PB3 | 1<<PB4;
 
     DDRB &= ~(1<<PB2);
 
-    PORTB ^= (1<<PB1); /* LED on */
+    PORTB ^= (1<<PB0); /* LED on */
 
     WDTCR |= (1<<WDP2) | (1<<WDP1);  /* 128K */
     WDTCR |= (1<<WDTIE);
@@ -65,16 +65,16 @@ int main(void) {
 
     for(;;) {
         sleep();
-        PORTB ^= (1<<PB1) | (1<<PB3); /* LED on */
+        PORTB ^= (1<<PB0) | (1<<PB3);
         sleep();
-        PORTB ^= (1<<PB3) | (1<<PB4); /* LED on */
+        PORTB ^= (1<<PB3) | (1<<PB4);
         sleep();
         PORTB ^= (1<<PB4);
 
         sleep();
-        PORTB ^= (1<<PB1);
+        PORTB ^= (1<<PB0);
         sleep();
-        PORTB ^= (1<<PB1);
+        PORTB ^= (1<<PB0);
         sleep();
         PORTB ^= (1<<PB3);
         sleep();
@@ -84,7 +84,7 @@ int main(void) {
         sleep();
         PORTB ^= (1<<PB4);
         sleep();
-        PORTB ^= (1<<PB1);
+        PORTB ^= (1<<PB0);
     }
 
     return 0;
