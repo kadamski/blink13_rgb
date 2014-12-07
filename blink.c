@@ -4,6 +4,10 @@
 #include <avr/sleep.h>
 #include <avr/interrupt.h>
 
+#define LED0 (1<<PB0)
+#define LED1 (1<<PB3)
+#define LED2 (1<<PB4)
+
 char state = 1;
 
 ISR(WDT_vect) {
@@ -22,7 +26,7 @@ void sleep(void)
         int old = PORTB;
 
         WDTCR &= ~(1<<WDTIE);
-        PORTB &= ~(1<<PB0 | 1<<PB3 | 1<<PB4);
+        PORTB &= ~(LED0 | LED1 | LED2);
 
         _delay_ms(500);
         PCMSK |= (1<<2);
@@ -46,11 +50,11 @@ void sleep(void)
 
 int main(void) {
     MCUSR = 0;
-    DDRB |= 1<<PB0 | 1<<PB3 | 1<<PB4;
+    DDRB |= LED0 | LED1 | LED2;
 
     DDRB &= ~(1<<PB2);
 
-    PORTB ^= (1<<PB0); /* LED on */
+    PORTB ^= LED0; /* LED on */
 
     WDTCR |= (1<<WDP2) | (1<<WDP1);  /* 128K */
     WDTCR |= (1<<WDTIE);
@@ -65,26 +69,26 @@ int main(void) {
 
     for(;;) {
         sleep();
-        PORTB ^= (1<<PB0) | (1<<PB3);
+        PORTB ^= LED0 | LED1;
         sleep();
-        PORTB ^= (1<<PB3) | (1<<PB4);
+        PORTB ^= LED1 | LED2;
         sleep();
-        PORTB ^= (1<<PB4);
+        PORTB ^= LED2;
 
         sleep();
-        PORTB ^= (1<<PB0);
+        PORTB ^= LED0;
         sleep();
-        PORTB ^= (1<<PB0);
+        PORTB ^= LED0;
         sleep();
-        PORTB ^= (1<<PB3);
+        PORTB ^= LED1;
         sleep();
-        PORTB ^= (1<<PB3);
+        PORTB ^= LED1;
         sleep();
-        PORTB ^= (1<<PB4);
+        PORTB ^= LED2;
         sleep();
-        PORTB ^= (1<<PB4);
+        PORTB ^= LED2;
         sleep();
-        PORTB ^= (1<<PB0);
+        PORTB ^= LED0;
     }
 
     return 0;
