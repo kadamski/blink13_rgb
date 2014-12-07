@@ -3,6 +3,7 @@
 
 #include <avr/sleep.h>
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
 
 #define DURATION_MIN 15
 
@@ -41,6 +42,7 @@ void power_down(void)
 
 void sleep(void)
 {
+    wdt_reset();
     sleep_mode();
     if (state == 0) {
         int old = PORTB;
