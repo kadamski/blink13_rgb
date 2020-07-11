@@ -16,8 +16,8 @@
 #define COUNTER_START (5*DURATION_MIN)
 #define DEBOUNCE_TIME 100
 
-char state = 1;
-char counter = 0;
+static char state = 1;
+static char counter = 0;
 
 ISR(WDT_vect)
 {
@@ -34,7 +34,7 @@ ISR(PCINT0_vect)
     PCMSK |= (1<<2);
 }
 
-void power_down(void)
+static void power_down(void)
 {
         int old = PORTB;
 
@@ -54,7 +54,7 @@ void power_down(void)
         PORTB = old;
 }
 
-void sleep(void)
+static void sleep(void)
 {
     wdt_reset();
     sleep_mode();
@@ -63,7 +63,7 @@ void sleep(void)
     }
 }
 
-inline void setup_ports(void)
+static inline void setup_ports(void)
 {
     DDRB |= LED0 | LED1 | LED2;
     DDRB &= ~BUTT;
